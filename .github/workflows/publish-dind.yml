@@ -32,7 +32,7 @@ jobs:
 
       - name: Build and push dind image
         run: |
-          docker build -t ghcr.io/adefemi171/terraform-gha-dind:latest .
+          docker build -t ghcr.io/adefemi171/terraform-gha-dind:latest -f dind.Dockerfile .
           docker push ghcr.io/adefemi171/terraform-gha-dind:latest 
        
 
