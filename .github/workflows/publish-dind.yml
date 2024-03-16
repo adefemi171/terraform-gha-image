@@ -46,3 +46,12 @@ jobs:
           push: true
           tags: ghcr.io/adefemi171/terraform-gha-dind:latest
       
+      - name: Build and push ARC image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./arc.Dockerfile
+          platforms: linux/arm64/v8,linux/amd64,linux/arm64 # used this to work on a specific platform
+          push: true
+          tags: ghcr.io/adefemi171/terraform-gha-arc:latest
+      
