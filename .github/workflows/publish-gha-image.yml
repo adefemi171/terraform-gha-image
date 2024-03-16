@@ -1,4 +1,4 @@
-name: Publish Dind container image to GitHub Container Registry
+name: Publish Terraform GHA image to GitHub Container Registry
 
 on:
   push:
@@ -30,12 +30,6 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      # - name: Build and push dind image
-      #   run: |
-      #     docker build -t ghcr.io/adefemi171/terraform-gha-dind:latest -f dind.Dockerfile .
-      #     docker push ghcr.io/adefemi171/terraform-gha-dind:latest 
-       
 
       - name: Build and push dind image
         uses: docker/build-push-action@v5
