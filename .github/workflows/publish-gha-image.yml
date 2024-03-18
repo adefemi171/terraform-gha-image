@@ -1,5 +1,9 @@
 name: Publish Terraform GHA image to GitHub Container Registry
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches:
@@ -15,6 +19,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
