@@ -8,10 +8,10 @@ on:
 jobs:
   publish:
     runs-on: arc-runners
-    # permissions: write-all
-    permissions:
-      contents: read
-      packages: write
+    permissions: write-all
+    # permissions:
+    #   contents: read
+    #   packages: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -36,7 +36,7 @@ jobs:
         with:
           context: .
           file: ./dind.Dockerfile
-          platforms: linux/arm64/v8,linux/amd64,linux/arm64 # used this to work on a specific platform
+          platforms: linux/arm64/v8 #,linux/amd64,linux/arm64 # used this to work on a specific platform
           push: true
           tags: ghcr.io/adefemi171/terraform-gha-dind:latest
       
@@ -45,7 +45,7 @@ jobs:
         with:
           context: .
           file: ./arc.Dockerfile
-          platforms: linux/arm64/v8,linux/amd64,linux/arm64 # used this to work on a specific platform
+          platforms: linux/arm64/v8 #,linux/amd64,linux/arm64 # used this to work on a specific platform
           push: true
           tags: ghcr.io/adefemi171/terraform-gha-arc:latest
       
