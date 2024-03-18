@@ -20,6 +20,39 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Configure tag & caching
+        run: |
+          # Set a base tag
+          TAG="latest"
+      
+          # Append a PR identifier if necessary
+          PR="${{ github.event.pull_request.number }}"
+          if [ ! -z "$PR" ]; then TAG="$TAG-pr$PR"; fi
+          echo "TAG=$TAG" >> $GITHUB_ENV
+      
+          # Determine cache usage based on event type
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            CACHEFROM=""
+          else
+            CACHEFROM="type=gha"
+          fi
+          echo "CACHEFROM=$CACHEFROM" >> $GITHUB_ENV
+      
+      - name: Prepare image dind metadata
+        id: dind-meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/adefemi171/terraform-gha-dind
+          tags: |
+            type=raw,value=${{ env.TAG }}
+      
+      - name: Prepare image ARC metadata
+        id: arc-meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/adefemi171/terraform-gha-arc
+          tags: |
+            type=raw,value=${{ env.TAG }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -43,7 +76,16 @@ jobs:
           file: ./dind.Dockerfile
           platforms: linux/arm64/v8 #,linux/amd64,linux/arm64 # used this to work on a specific platform
           push: true
-          tags: ghcr.io/adefemi171/terraform-gha-dind:latest
+          # tags: ghcr.io/adefemi171/terraform-gha-dind:latest
+          tags: ${{ steps.dind-meta.outputs.tags }}
+          labels: ${{ steps.dind-meta.outputs.labels }}
+          cache-from: ${{ env.CACHEFROM }}
+          cache-to: type=gha,mode=max
+      
+      # - name: Build and push dind image
+      #   run: |
+      #     docker build -t ghcr.io/adefemi171/terraform-gha-arc:latest -f arc.Dockerfile .
+      #     docker push ghcr.io/adefemi171/terraform-gha-arc:latest
       
       - name: Build and push ARC image
         uses: docker/build-push-action@v5
@@ -52,5 +94,9 @@ jobs:
           file: ./arc.Dockerfile
           platforms: linux/arm64/v8 #,linux/amd64,linux/arm64 # used this to work on a specific platform
           push: true
-          tags: ghcr.io/adefemi171/terraform-gha-arc:latest
+          # tags: ghcr.io/adefemi171/terraform-gha-arc:latest
+          tags: ${{ steps.arc-meta.outputs.tags }}
+          labels: ${{ steps.arc-meta.outputs.labels }}
+          cache-from: ${{ env.CACHEFROM }}
+          cache-to: type=gha,mode=max
       
