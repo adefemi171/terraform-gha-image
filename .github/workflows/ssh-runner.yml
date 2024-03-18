@@ -24,12 +24,12 @@ jobs:
       - name: Tailscale
         uses: tailscale/github-action@v2
         with:
-            authkey: ${{ secrets.TS_AUTH_KEY }}
-            # oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
-            # oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
-            # tags: tag:ci
+            # authkey: ${{ secrets.TS_AUTH_KEY }}
+            oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+            oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+            tags: tag:ci
     
       - name: SSH to server
         run: |
           ssh -o "StrictHostKeyChecking=no"  ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 
-          "echo 'Hello, world!'"
+          terraform --version
