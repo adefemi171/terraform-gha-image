@@ -1,8 +1,8 @@
 name: SSH To Server
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+# concurrency:
+#   group: ${{ github.workflow }}-${{ github.ref }}
+#   cancel-in-progress: true
 
 on:
   push:
@@ -11,8 +11,8 @@ on:
 
 
 jobs:
-  publish:
-    runs-on: arc-runners
+  connect-to-server:
+    runs-on: ubuntu-latest
     # permissions: write-all
     permissions:
       contents: read
