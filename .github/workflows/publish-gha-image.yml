@@ -8,8 +8,8 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - '.github/**'
+    # paths-ignore:
+    #   - '.github/**'
   pull_request:
     branches:
       - main
@@ -24,6 +24,18 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      
+      - name: Tailscale
+        uses: tailscale/github-action@v2
+        with:
+            oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+            oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+            tags: tag:ci
+
+      - name: SSH to server
+        run: |
+          ssh -o "StrictHostKeyChecking=no"  ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 
+          terraform --version
 
       - name: Configure tag & caching
         run: |
